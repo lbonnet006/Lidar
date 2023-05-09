@@ -15,8 +15,11 @@ int main (int argc, char * argv []){
 	lidar->connect();
 	lidar->init(); 
 	//lidar->calibration();
-	lidar->scan_cart_file(argv[3]);
-	//lidar->position();
+	//lidar->scan_cart_file(argv[3]);
+	while(1)
+	{
+		lidar->position();
+	}
 	lidar->end();
 
     return 0;

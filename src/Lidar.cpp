@@ -218,7 +218,7 @@ int Lidar::scan_pol(float *data, float *angle)
 				printf("Problème de communication\n");
 			}
             return -1;
-		}
+		} 
 
 	}while(nbr_point < nb_point);
 
@@ -513,10 +513,10 @@ void Lidar::tri(float *data, float *angle, float *data_tri, float *angle_tri)
 	}
 }
 
-void Lidar::point_part(float *data, float *angle, float *X_part, float *Y_part, float *angle_part)
+int Lidar::point_part(float *data, float *angle, float *X_part, float *Y_part, float *angle_part)
 {
 	nb_part = 0;
-
+	cout << "Point part" <<endl;
 	float dist_moy = data[0];
 	float angle_moy = angle[0];
 	float nbr_moy = 1;
@@ -560,6 +560,17 @@ void Lidar::point_part(float *data, float *angle, float *X_part, float *Y_part, 
 			{
 				dist_moy /= nbr_moy;
 				angle_moy /= nbr_moy;
+
+				if(dist_moy < seuil_arret)
+				{
+					cout << "ALERTE: Objet trop proche" << endl;
+					return -1;
+				}
+				else if(dist_moy < seuil_danger)
+				{
+					cout << "ATTENTION: Objet proche" << endl;
+				}
+
 				d = sqrt((X[i-1]-X[index])*(X[i-1]-X[index]) + (Y[i-1]-Y[index])*(Y[i-1]-Y[index]));
 				if(d > taille_rep_min && d < taille_rep_max)
 				{
@@ -589,6 +600,8 @@ void Lidar::point_part(float *data, float *angle, float *X_part, float *Y_part, 
 
 	fclose(part_dist);
 	fclose(part_angle);
+
+	return 0;
 }
 
 int Lidar::balises(float *X_part, float *Y_part, float *angle_part)
@@ -772,6 +785,7 @@ int Lidar::balises(float *X_part, float *Y_part, float *angle_part)
 
 int Lidar::position()
 {
+
     float *data = (float*) malloc(sizeof(float)*nb_point);
     float *angle = (float*) malloc(sizeof(float)*nb_point);
     float *data_tri = (float*) malloc(sizeof(float)*nb_point);
@@ -779,7 +793,7 @@ int Lidar::position()
     float *X_part = (float*) malloc(sizeof(float)*nb_point);
     float *Y_part = (float*) malloc(sizeof(float)*nb_point);
     float *angle_part = (float*) malloc(sizeof(float)*nb_point);
-
+ 
 	for(int i = 0; i < nb_point; i++)
 	{
 		data[i] = 0;
@@ -790,7 +804,6 @@ int Lidar::position()
 		Y_part[i] = 0;
 		angle_part[i] = 0;
 	}
-
     scan_pol(data, angle);
 
     tri(data, angle, data_tri, angle_tri);
@@ -825,7 +838,7 @@ int Lidar::position()
 
     return 0;
 }
-        
+         
 void Lidar::get_position(int *pos_x, int *pos_y)
 {
 	*pos_x = x;

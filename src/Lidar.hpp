@@ -28,7 +28,7 @@ class Lidar {
         int fileID = -1;
         string port = "/dev/ttyUSB0";
 
-        int nb_point = 1000;
+        int nb_point = 200;
         int nb_calibration = 3;
 
         int dist_min = 150;
@@ -61,7 +61,10 @@ class Lidar {
         float x;
         float y;
 
-        bool affichage = true;
+        bool affichage = false;
+
+        float seuil_danger = 700;
+        float seuil_arret = 350;
 
     public:
         Lidar(string p, int n);
@@ -88,7 +91,7 @@ class Lidar {
         int scan_img(string file);
 
         void tri(float *data, float *angle, float *data_tri, float *angle_tri);
-        void point_part(float *data, float *angle, float *X_part, float *Y_part, float *angle_part);
+        int point_part(float *data, float *angle, float *X_part, float *Y_part, float *angle_part);
         int balises(float *X_part, float *Y_part, float *angle_part);
         int position();
 
